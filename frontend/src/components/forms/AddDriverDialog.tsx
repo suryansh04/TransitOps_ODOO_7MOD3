@@ -78,7 +78,7 @@ export function AddDriverDialog({ open, onClose, onSubmit }: AddDriverDialogProp
 
     return (
         <Dialog open={open} onOpenChange={(o) => { if (!o) onClose() }}>
-            <DialogContent className="max-w-xl">
+            <DialogContent className="sm:max-w-2xl w-[95vw]">
                 <DialogHeader>
                     <DialogTitle>Add New Driver</DialogTitle>
                     <DialogDescription>
@@ -87,7 +87,7 @@ export function AddDriverDialog({ open, onClose, onSubmit }: AddDriverDialogProp
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-5" noValidate>
                     {/* Row 1: Name + License Number */}
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-1.5">
                             <Label htmlFor="drv-name" className="text-xs uppercase tracking-wide text-muted-foreground font-medium">
                                 Full Name
@@ -116,8 +116,8 @@ export function AddDriverDialog({ open, onClose, onSubmit }: AddDriverDialogProp
                         </div>
                     </div>
                     {/* Row 2: Category + Expiry */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-1.5 min-w-0">
                             <Label htmlFor="drv-lic-cat" className="text-xs uppercase tracking-wide text-muted-foreground font-medium">
                                 License Category
                             </Label>
@@ -126,7 +126,7 @@ export function AddDriverDialog({ open, onClose, onSubmit }: AddDriverDialogProp
                                 onValueChange={(v) => { setLicenseCategory(v); if (errors.licenseCategory) setErrors(p => ({ ...p, licenseCategory: "" })) }}
                                 disabled={submitting}
                             >
-                                <SelectTrigger id="drv-lic-cat">
+                                <SelectTrigger id="drv-lic-cat" className="[&>span]:truncate">
                                     <SelectValue placeholder="Select category…" />
                                 </SelectTrigger>
                                 <SelectContent>
