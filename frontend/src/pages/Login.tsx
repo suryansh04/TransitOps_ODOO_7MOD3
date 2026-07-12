@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle, Loader2, Eye, EyeOff } from "lucide-react"
+import logo from "@/assets/logo.png"
 
 export const Login: React.FC = () => {
   const { login } = useAuth()
@@ -54,11 +55,7 @@ export const Login: React.FC = () => {
       {/* Left Panel - Dark theme as per implementation.md */}
       <div className="hidden w-1/2 flex-col justify-between bg-primary p-12 text-primary-foreground lg:flex">
         <div className="space-y-4 mt-8">
-          <div className="h-12 w-12 rounded bg-primary-foreground" style={{
-            backgroundImage: "radial-gradient(circle, #000 1px, transparent 1px)",
-            backgroundSize: "6px 6px"
-          }} />
-          <h1 className="text-4xl font-bold tracking-tight">TransitOps</h1>
+          <img src={logo} alt="TransitOps Logo" className="h-28 w-auto object-contain -ml-2" />
           <p className="text-lg text-primary-foreground/80">Smart Transport Operations Platform</p>
         </div>
 
