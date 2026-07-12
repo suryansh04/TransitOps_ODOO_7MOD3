@@ -35,6 +35,8 @@ export const AppLayout: React.FC = () => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
+  const analyticsAllowedRoles = new Set(["fleet_manager", "financial_analyst"])
+
   const handleLogout = () => {
     logout()
     navigate("/login")
@@ -54,6 +56,9 @@ export const AppLayout: React.FC = () => {
   // Filter sidebar based on RBAC permissions
   const filteredNav = navItems.filter(item => {
     if (item.permission === "always") return true
+    if (item.permission === "analytics") {
+      return !!user?.role && analyticsAllowedRoles.has(user.role)
+    }
     return user?.permissions?.[item.permission] && user.permissions[item.permission] !== "none"
   })
 
