@@ -61,31 +61,22 @@ export const Login: React.FC = () => {
 
         <div className="space-y-6 mb-24 max-w-md">
           <h2 className="text-2xl font-semibold leading-tight">
-            Streamline your entire transport operation.
+            Manage your fleet with ease.
           </h2>
-          <div className="space-y-4 text-primary-foreground/80">
-            <p>
-              TransitOps provides end-to-end visibility and control over your fleet, drivers, and trips all in one unified platform.
-            </p>
-            <ul className="space-y-3 pt-2">
-              <li className="flex items-center gap-3">
-                <span className="h-2 w-2 rounded-full bg-primary-foreground" />
-                Real-time trip dispatch and monitoring
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="h-2 w-2 rounded-full bg-primary-foreground" />
-                Automated maintenance and fuel logs
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="h-2 w-2 rounded-full bg-primary-foreground" />
-                Comprehensive cost and ROI analytics
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="h-2 w-2 rounded-full bg-primary-foreground" />
-                Secure Role-Based Access Control (RBAC)
-              </li>
-            </ul>
-          </div>
+          <ul className="space-y-3 text-primary-foreground/80 pt-2">
+            <li className="flex items-center gap-3">
+              <span className="h-2 w-2 rounded-full bg-primary-foreground" />
+              Live trip dispatching
+            </li>
+            <li className="flex items-center gap-3">
+              <span className="h-2 w-2 rounded-full bg-primary-foreground" />
+              Automated maintenance
+            </li>
+            <li className="flex items-center gap-3">
+              <span className="h-2 w-2 rounded-full bg-primary-foreground" />
+              Cost & ROI analytics
+            </li>
+          </ul>
         </div>
 
         <div className="text-sm text-primary-foreground/60">
