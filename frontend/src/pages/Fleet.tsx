@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Loader2, Plus, Search } from "lucide-react"
+import { AddVehicleDialog } from "@/components/forms/AddVehicleDialog"
 
 export default function Fleet() {
   const { user } = useAuth()
@@ -30,16 +31,6 @@ export default function Fleet() {
   const [isAddOpen, setIsAddOpen] = useState(false)
 
   const { vehicles, loading, error, addVehicle } = useFleet({ type: typeFilter, status: statusFilter })
-
-  const [formData, setFormData] = useState({
-    registration_number: "",
-    name_model: "",
-    type: "Medium Truck",
-    max_load_capacity_kg: "",
-    odometer_km: "",
-    acquisition_cost: "",
-    region: "Gandhinagar"
-  })
 
   const filteredVehicles = vehicles.filter(v => 
     v.registration_number.toLowerCase().includes(search.toLowerCase())
@@ -60,23 +51,6 @@ export default function Fleet() {
       return `${(kg / 1000).toFixed(0)} Ton`
     }
     return `${kg} kg`
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const success = await addVehicle({
-      registration_number: formData.registration_number.toUpperCase(),
-      name_model: formData.name_model,
-      type: formData.type,
-      max_load_capacity_kg: Number(formData.max_load_capacity_kg),
-      odometer_km: Number(formData.odometer_km),
-      acquisition_cost: Number(formData.acquisition_cost),
-      region: formData.region
-    })
-    if (success) {
-      setIsAddOpen(false)
-      setFormData({ registration_number: "", name_model: "", type: "Medium Truck", max_load_capacity_kg: "", odometer_km: "", acquisition_cost: "", region: "Gandhinagar" })
-    }
   }
 
   return (
@@ -123,62 +97,16 @@ export default function Fleet() {
         </div>
 
         {user?.permissions?.fleet === "full" && (
-          <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="mr-2 h-4 w-4" /> Add Vehicle
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add New Vehicle</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Registration Number</label>
-                    <Input required value={formData.registration_number} onChange={e => setFormData({...formData, registration_number: e.target.value})} placeholder="GJ01AB1234" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Name/Model</label>
-                    <Input required value={formData.name_model} onChange={e => setFormData({...formData, name_model: e.target.value})} placeholder="VAN-05" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Type</label>
-                    <Select value={formData.type} onValueChange={v => setFormData({...formData, type: v})}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Van">Van</SelectItem>
-                        <SelectItem value="Mini Truck">Mini Truck</SelectItem>
-                        <SelectItem value="Medium Truck">Medium Truck</SelectItem>
-                        <SelectItem value="Heavy Truck">Heavy Truck</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Region</label>
-                    <Input required value={formData.region} onChange={e => setFormData({...formData, region: e.target.value})} placeholder="Gandhinagar" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Capacity (kg)</label>
-                    <Input required type="number" min="1" value={formData.max_load_capacity_kg} onChange={e => setFormData({...formData, max_load_capacity_kg: e.target.value})} placeholder="500" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Initial Odometer (km)</label>
-                    <Input required type="number" min="0" value={formData.odometer_km} onChange={e => setFormData({...formData, odometer_km: e.target.value})} placeholder="0" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Acquisition Cost</label>
-                    <Input required type="number" min="1" value={formData.acquisition_cost} onChange={e => setFormData({...formData, acquisition_cost: e.target.value})} placeholder="620000" />
-                  </div>
-                </div>
-                <div className="flex justify-end gap-2 pt-4">
-                  <Button type="button" variant="outline" onClick={() => setIsAddOpen(false)}>Cancel</Button>
-                  <Button type="submit">Add Vehicle</Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
+          <>
+            <Button onClick={() => setIsAddOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" /> Add Vehicle
+            </Button>
+            <AddVehicleDialog 
+              open={isAddOpen} 
+              onClose={() => setIsAddOpen(false)} 
+              onSubmit={addVehicle} 
+            />
+          </>
         )}
       </div>
 

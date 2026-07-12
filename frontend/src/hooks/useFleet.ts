@@ -32,12 +32,10 @@ export const useFleet = (filters: { type?: string, status?: string }) => {
   const addVehicle = async (data: Omit<Vehicle, "id" | "created_at" | "updated_at" | "status">) => {
     try {
       await api.post("/api/vehicles", data)
-      alert("Vehicle added successfully")
       fetchVehicles()
-      return true
+      return { success: true }
     } catch (err: any) {
-      alert("Failed to add vehicle: " + (err.response?.data?.detail || "Unknown error"))
-      return false
+      return { success: false, error: err.response?.data?.detail || "Unknown error" }
     }
   }
 
