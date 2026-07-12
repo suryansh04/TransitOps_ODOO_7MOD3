@@ -52,39 +52,39 @@ export const Login: React.FC = () => {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Left Panel - Dark theme as per implementation.md */}
-      <div className="hidden w-1/2 flex-col justify-between bg-slate-900 p-12 text-white lg:flex">
+      <div className="hidden w-1/2 flex-col justify-between bg-primary p-12 text-primary-foreground lg:flex">
         <div className="space-y-4 mt-8">
-          <div className="h-12 w-12 rounded bg-yellow-500" style={{
+          <div className="h-12 w-12 rounded bg-primary-foreground" style={{
             backgroundImage: "radial-gradient(circle, #000 1px, transparent 1px)",
             backgroundSize: "6px 6px"
           }} />
           <h1 className="text-4xl font-bold tracking-tight">TransitOps</h1>
-          <p className="text-lg text-slate-300">Smart Transport Operations Platform</p>
+          <p className="text-lg text-primary-foreground/80">Smart Transport Operations Platform</p>
         </div>
 
         <div className="space-y-4 mb-24">
           <h2 className="text-xl font-semibold">One login, four roles:</h2>
           <ul className="space-y-3">
             <li className="flex items-center gap-3">
-              <span className="h-2 w-2 rounded-full bg-yellow-500" />
+              <span className="h-2 w-2 rounded-full bg-primary-foreground" />
               Fleet Manager
             </li>
             <li className="flex items-center gap-3">
-              <span className="h-2 w-2 rounded-full bg-yellow-500" />
+              <span className="h-2 w-2 rounded-full bg-primary-foreground" />
               Dispatcher
             </li>
             <li className="flex items-center gap-3">
-              <span className="h-2 w-2 rounded-full bg-yellow-500" />
+              <span className="h-2 w-2 rounded-full bg-primary-foreground" />
               Safety Officer
             </li>
             <li className="flex items-center gap-3">
-              <span className="h-2 w-2 rounded-full bg-yellow-500" />
+              <span className="h-2 w-2 rounded-full bg-primary-foreground" />
               Financial Analyst
             </li>
           </ul>
         </div>
 
-        <div className="text-sm text-slate-400">
+        <div className="text-sm text-primary-foreground/60">
           TRANSITOPS &copy; 2026 - RBAC MODE
         </div>
       </div>
@@ -170,7 +170,7 @@ export const Login: React.FC = () => {
                   Remember me
                 </Label>
               </div>
-              <Button variant="link" type="button" className="px-0 text-sm font-medium text-blue-600 hover:text-blue-500 cursor-pointer">
+              <Button variant="link" type="button" className="px-0 text-sm font-medium text-primary hover:text-primary/80 cursor-pointer">
                 Forgot password?
               </Button>
             </div>

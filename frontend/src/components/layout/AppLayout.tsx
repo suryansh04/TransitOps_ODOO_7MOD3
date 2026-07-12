@@ -126,9 +126,9 @@ export const AppLayout: React.FC = () => {
             <div className="flex items-center w-full max-w-sm relative ml-4">
                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                <input 
-                  type="text" 
-                  placeholder="Search..." 
-                  className="w-full h-9 border rounded-md pl-9 pr-3 text-sm focus:outline-none focus:ring-1 focus:ring-slate-300 transition-shadow bg-muted/50"
+                  type="search" 
+                  placeholder="Search trips, drivers, vehicles..." 
+                  className="w-full h-9 border rounded-md pl-9 pr-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring transition-shadow bg-muted/50"
                />
             </div>
             
