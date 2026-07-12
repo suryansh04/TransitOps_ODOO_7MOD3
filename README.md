@@ -126,6 +126,7 @@ The system uses a strictly typed, normalized relational model:
 - `maintenance_logs`: Service records and costs.
 - `fuel_logs` & `expenses`: Tracks operational expenditures linked to trips/vehicles.
 - `role_permissions`: A central matrix mapping roles to module access levels.
+- `org_settings`: Global depot configuration like currency and distance units.
 
 ---
 

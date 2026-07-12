@@ -6,3 +6,5 @@ passlib[bcrypt]
 pyjwt
 python-dotenv
 python-multipart
+alembic
+psycopg2-binary
