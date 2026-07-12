@@ -30,20 +30,24 @@ The platform follows a modern decoupled architecture:
 
 ```mermaid
 graph TD
-    Client[React/Vite Frontend] -->|REST API + JWT| API[FastAPI Backend]
-    API -->|SQLAlchemy ORM| DB[(PostgreSQL)]
-    
     subgraph Frontend [Frontend Architecture]
+        UI[React/Vite Client]
         Auth[Auth Context]
-        Components[shadcn/ui Components]
-        Pages[Dashboard, Fleet, Trips, etc.]
+        Pages[Dashboard, Fleet, Trips]
     end
     
     subgraph Backend [Backend Architecture]
-        Controllers[API Routers]
-        Services[Business Logic & RBAC]
-        Models[Pydantic & SQLAlchemy Models]
+        API[FastAPI Routers]
+        Logic[Business Logic & RBAC]
+        Models[SQLAlchemy Models]
     end
+    
+    DB[(PostgreSQL Database)]
+
+    UI -- REST API + JWT --> API
+    API --> Logic
+    Logic --> Models
+    Models -- ORM --> DB
 ```
 
 ---
