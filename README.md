@@ -82,7 +82,7 @@ Log in using any of the seeded RBAC accounts:
 - **Fleet Manager**: `fleet@transitops.in` (Pass: `password123`)
 - **Dispatcher**: `raven@transitops.in` (Pass: `password123`)
 - **Safety Officer**: `safety@transitops.in` (Pass: `password123`)
-- **Financial Analyst**: `financial@transitops.in` (Pass: `password123`)
+- **Financial Analyst**: `finance@transitops.in` (Pass: `password123`)
 
 ---
 
@@ -111,7 +111,7 @@ The backend exposes a RESTful API powered by FastAPI, featuring automatic OpenAP
   - `GET /me`: Returns the current user's profile and resolved RBAC permissions.
 - **Fleet Management (`/api/vehicles`, `/api/drivers`)**:
   - `GET`, `POST`, `PUT`, `DELETE` operations for registering and updating vehicles and drivers. Strict validation via Pydantic.
-- **Operations (`/api/trips`, `/api/maintenance`, `/api/fuel`, `/api/expenses`)**:
+- **Operations (`/api/trips`, `/api/maintenance`, `/api/fuel-logs`, `/api/expenses`)**:
   - Manages the lifecycle of a trip (Draft -> Dispatched -> Completed). Automates state transitions (e.g., dispatching a trip safely sets the driver and vehicle to `on_trip`).
 - **Dashboard & Analytics (`/api/dashboard`, `/api/analytics`)**:
   - High-performance aggregation endpoints providing optimized KPIs, fuel efficiency metrics, and financial cost data for charts.
