@@ -3,8 +3,9 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.core.auth import require_permission
 from app.schemas.dashboard import SettingUpdate, SettingResponse
-from app.models.domain import Vehicle, Driver, Trip, OrgSetting, FuelLog, MaintenanceLog
+from app.models.domain import Vehicle, Driver, Trip, OrgSetting, FuelLog, MaintenanceLog, Expense
 from sqlalchemy import func
+from datetime import date
 
 router = APIRouter(prefix="/api")
 
@@ -51,25 +52,102 @@ def get_dashboard(vehicle_type: str = None, status: str = None, region: str = No
 
 @router.get("/analytics")
 def get_analytics(from_date: str = None, to_date: str = None, db: Session = Depends(get_db), user = Depends(require_permission("analytics"))):
-    fuel_sum = db.query(func.sum(FuelLog.cost)).scalar() or 0
-    maint_sum = db.query(func.sum(MaintenanceLog.cost)).scalar() or 0
-    op_cost = float(fuel_sum) + float(maint_sum)
-    
-    # Mocking Monthly Revenue for Hackathon UI display purposes
+    def parse_date(value: str, field_name: str):
+        if value is None:
+            return None
+        try:
+            return date.fromisoformat(value)
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=f"Invalid {field_name}. Use YYYY-MM-DD format") from exc
+
+    from_dt = parse_date(from_date, "from_date")
+    to_dt = parse_date(to_date, "to_date")
+    if from_dt and to_dt and from_dt > to_dt:
+        raise HTTPException(status_code=422, detail="from_date cannot be after to_date")
+
+    trips_query = db.query(Trip).filter(Trip.status == "completed")
+    fuel_query = db.query(FuelLog)
+    maintenance_query = db.query(MaintenanceLog)
+    expenses_query = db.query(Expense)
+
+    if from_dt:
+        trips_query = trips_query.filter(func.date(Trip.completed_at) >= from_dt)
+        fuel_query = fuel_query.filter(FuelLog.log_date >= from_dt)
+        maintenance_query = maintenance_query.filter(MaintenanceLog.service_date >= from_dt)
+        expenses_query = expenses_query.filter(Expense.expense_date >= from_dt)
+    if to_dt:
+        trips_query = trips_query.filter(func.date(Trip.completed_at) <= to_dt)
+        fuel_query = fuel_query.filter(FuelLog.log_date <= to_dt)
+        maintenance_query = maintenance_query.filter(MaintenanceLog.service_date <= to_dt)
+        expenses_query = expenses_query.filter(Expense.expense_date <= to_dt)
+
+    fuel_sum = float(fuel_query.with_entities(func.sum(FuelLog.cost)).scalar() or 0)
+    maintenance_sum = float(maintenance_query.with_entities(func.sum(MaintenanceLog.cost)).scalar() or 0)
+    operational_cost = fuel_sum + maintenance_sum
+
+    total_distance = float(trips_query.with_entities(func.sum(Trip.actual_distance_km)).scalar() or 0)
+    total_fuel_liters = float(trips_query.with_entities(func.sum(Trip.fuel_consumed_liters)).scalar() or 0)
+    fuel_efficiency = round(total_distance / total_fuel_liters, 1) if total_fuel_liters else 0.0
+
+    completed_trip_rows = trips_query.with_entities(Trip.completed_at, Trip.revenue_amount).all()
+    monthly_revenue_map = {}
+    for completed_at, revenue_amount in completed_trip_rows:
+        if not completed_at or revenue_amount is None:
+            continue
+        month_key = completed_at.strftime("%Y-%m")
+        monthly_revenue_map[month_key] = monthly_revenue_map.get(month_key, 0.0) + float(revenue_amount)
+    monthly_revenue = [
+        {"month": month, "revenue": round(value, 2)}
+        for month, value in sorted(monthly_revenue_map.items())
+    ]
+
+    vehicle_cost_map = {}
+
+    fuel_rows = fuel_query.with_entities(FuelLog.vehicle_id, func.sum(FuelLog.cost)).group_by(FuelLog.vehicle_id).all()
+    for vehicle_id, total_cost in fuel_rows:
+        vehicle_cost_map[vehicle_id] = vehicle_cost_map.get(vehicle_id, 0.0) + float(total_cost or 0)
+
+    maintenance_rows = maintenance_query.with_entities(MaintenanceLog.vehicle_id, func.sum(MaintenanceLog.cost)).group_by(MaintenanceLog.vehicle_id).all()
+    for vehicle_id, total_cost in maintenance_rows:
+        vehicle_cost_map[vehicle_id] = vehicle_cost_map.get(vehicle_id, 0.0) + float(total_cost or 0)
+
+    expense_rows = expenses_query.with_entities(
+        Expense.vehicle_id,
+        func.sum(Expense.toll_amount + Expense.other_amount + Expense.maintenance_linked_cost),
+    ).group_by(Expense.vehicle_id).all()
+    for vehicle_id, total_cost in expense_rows:
+        vehicle_cost_map[vehicle_id] = vehicle_cost_map.get(vehicle_id, 0.0) + float(total_cost or 0)
+
+    top_vehicle_ids = [vehicle_id for vehicle_id, _ in sorted(vehicle_cost_map.items(), key=lambda item: item[1], reverse=True)[:3]]
+    registration_by_id = {
+        vehicle.id: vehicle.registration_number
+        for vehicle in db.query(Vehicle).filter(Vehicle.id.in_(top_vehicle_ids)).all()
+    } if top_vehicle_ids else {}
+
+    top_costliest_vehicles = [
+        {
+            "vehicle_id": vehicle_id,
+            "registration_number": registration_by_id.get(vehicle_id, f"VEH-{vehicle_id}"),
+            "total_cost": round(total_cost, 2),
+        }
+        for vehicle_id, total_cost in sorted(vehicle_cost_map.items(), key=lambda item: item[1], reverse=True)[:3]
+    ]
+
+    total_revenue = float(trips_query.with_entities(func.sum(Trip.revenue_amount)).scalar() or 0)
+    acquisition_cost_sum = float(db.query(func.sum(Vehicle.acquisition_cost)).scalar() or 0)
+    vehicle_roi_percent = round(((total_revenue - operational_cost) / acquisition_cost_sum) * 100, 1) if acquisition_cost_sum else 0.0
+
+    active_vehicles = db.query(Vehicle).filter(Vehicle.status != "retired").count()
+    on_trip_vehicles = db.query(Vehicle).filter(Vehicle.status == "on_trip").count()
+    fleet_utilization_percent = round((on_trip_vehicles / active_vehicles) * 100, 1) if active_vehicles else 0.0
+
     return {
-        "fuel_efficiency_km_per_l": 8.4,
-        "fleet_utilization_percent": 81,
-        "operational_cost": op_cost,
-        "vehicle_roi_percent": 14.2,
-        "monthly_revenue": [
-            { "month": "2026-01", "revenue": 45000 },
-            { "month": "2026-02", "revenue": 52000 }
-        ],
-        "top_costliest_vehicles": [
-            { "vehicle_id": 2, "registration_number": "TRUCK-11", "total_cost": 42500 },
-            { "vehicle_id": 3, "registration_number": "MINI-03", "total_cost": 18200 },
-            { "vehicle_id": 1, "registration_number": "VAN-05", "total_cost": 5300 }
-        ]
+        "fuel_efficiency_km_per_l": fuel_efficiency,
+        "fleet_utilization_percent": fleet_utilization_percent,
+        "operational_cost": round(operational_cost, 2),
+        "vehicle_roi_percent": vehicle_roi_percent,
+        "monthly_revenue": monthly_revenue,
+        "top_costliest_vehicles": top_costliest_vehicles,
     }
 
 @router.get("/settings", response_model=SettingResponse)

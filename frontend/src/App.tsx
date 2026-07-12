@@ -2,6 +2,7 @@ import React from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { AuthProvider, useAuth } from "@/context/AuthContext"
 import { Login } from "@/pages/Login"
+import { Analytics } from "@/pages/Analytics"
 import { Settings } from "@/pages/Settings"
 import { Trips } from "@/pages/Trips"
 import { AppLayout } from "@/components/layout/AppLayout"
@@ -91,7 +92,7 @@ const AppContent: React.FC = () => {
           <Route path="trips" element={<RBACRoute module="trips"><Trips /></RBACRoute>} />
           <Route path="maintenance" element={<RBACRoute module="fleet"><MockPage title="Maintenance" /></RBACRoute>} />
           <Route path="fuel-expenses" element={<RBACRoute module="fuel_expenses"><MockPage title="Fuel & Expenses" /></RBACRoute>} />
-          <Route path="analytics" element={<RBACRoute module="analytics"><MockPage title="Analytics" /></RBACRoute>} />
+          <Route path="analytics" element={<RBACRoute module="analytics"><Analytics /></RBACRoute>} />
           <Route path="settings" element={<RBACRoute module="settings"><Settings /></RBACRoute>} />
         </Route>
 

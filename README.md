@@ -48,6 +48,23 @@ Seed the database with initial dummy data (Test Users, Trucks, Drivers, and Trip
 python -m app.seed
 ```
 
+For richer analytics demo data (more completed trips, fuel logs, expenses), run:
+```bash
+# Adds deterministic extra data once (safe to share across team)
+python -m app.seed --rich-data
+```
+
+If you want a fully fresh, consistent dataset before a demo:
+```bash
+# Reset operational data, then seed baseline + rich analytics data
+python -m app.seed --reset --rich-data
+```
+
+Optional: control volume of generated analytics rows:
+```bash
+python -m app.seed --reset --rich-data --trip-count 72
+```
+
 Start the FastAPI backend server:
 ```bash
 uvicorn app.main:app --reload
@@ -87,3 +104,16 @@ You can now open the frontend link in your browser and log in using any of the p
 - **Fleet Manager:** `fleet@transitops.in` (Password: `password123`)
 - **Dispatcher:** `raven@transitops.in` (Password: `password123`)
 - **Safety Officer:** `safety@transitops.in` (Password: `password123`)
+
+## Team Sharing (Easy Mode)
+
+Use this workflow so everyone has the same demo numbers:
+
+1. Commit and push changes to `backend/app/seed.py` + this README.
+2. Ask teammates to pull latest `main`.
+3. Everyone runs one command from `backend`:
+	```bash
+	python -m app.seed --reset --rich-data
+	```
+
+Because the rich seed is deterministic, your charts/KPIs stay consistent across machines.
