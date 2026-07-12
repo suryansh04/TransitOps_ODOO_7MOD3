@@ -72,8 +72,8 @@ This document outlines a step-by-step plan to build the TransitOps platform for 
 
 ### 5.3 Dashboard (1. Dashboard)
 *   **Layout & Navigation:** 
-    *   Sidebar with yellow outline/border indicating active state on "Dashboard".
-    *   Top Header includes a Search `Input` ("Search..."), user profile ("Raven K."), and a blue "Dispatch Trip" `Button`.
+    *   Sidebar indicating active state on "Dashboard".
+    *   Top Header includes a Search `Input` ("Search..."), user profile ("Raven K."), and a "Dispatch Trip" `Button`.
 *   **Filters:** Top row containing three `Select` components ("Vehicle Type: All", "Status: All", "Region: All").
 *   **KPI Cards:** A horizontal row of simple `Card` components with large numbers: "ACTIVE VEHICLES 53", "AVAILABLE VEHICLES 42", "VEHICLES IN MAINTENANCE 05", "ACTIVE TRIPS 18", "PENDING TRIPS 09", "DRIVERS ON DUTY 26", and "FLEET UTILIZATION 81%".
 *   **Main Content Split:**

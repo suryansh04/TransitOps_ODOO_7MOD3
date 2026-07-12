@@ -653,7 +653,7 @@ client — the backend populates it by looking up any `maintenance_logs` tied to
 ## Dashboard & Analytics
 
 ### `GET /api/dashboard`
-**Status:** 🔲 · **Auth:** 🔒 · **Owner:** TBD
+**Status:** ✅ Tested · **Auth:** 🔒 · **Owner:** Antigravity
 
 **Query params:** `vehicle_type`, `status`, `region` (optional filters)
 
@@ -670,9 +670,11 @@ client — the backend populates it by looking up any `maintenance_logs` tied to
   "recent_trips": [
     {
       "trip_code": "TR001",
-      "vehicle_registration_number": "VAN-05",
+      "vehicle_registration_number": "GJ01AB4521",
+      "vehicle_name_model": "Ashok Leyland Ecomet",
+      "vehicle_type": "Medium Truck",
       "driver_name": "Alex",
-      "status": "on_trip",
+      "status": "dispatched",
       "eta": "45 min"
     }
   ],
@@ -770,4 +772,6 @@ silently implemented.
 
 | Date | Endpoint | Change | Changed By |
 |---|---|---|---|
-| — | — | — | — |
+| 2026-07-12 | `GET /api/dashboard` | Corrected mock JSON: changed vehicle_registration_number from name_model to actual registration string, and changed trip status from `on_trip` to `dispatched` to align with DB schema. | Antigravity |
+| 2026-07-12 | `GET /api/dashboard` | Added `vehicle_name_model` to payload for better UI readability; Updated vehicle filtering to dynamically search both `type` and `name_model` using OR condition. | Antigravity |
+| 2026-07-12 | `GET /api/dashboard` | Added `vehicle_type` to payload to format the frontend dashboard table accurately. | Antigravity |
