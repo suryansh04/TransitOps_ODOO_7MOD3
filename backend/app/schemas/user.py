@@ -24,6 +24,16 @@ class UserResponse(BaseModel):
     class Config:
         from_attributes = True
 
+    @classmethod
+    def build(cls, user, permissions: Dict[str, str]):
+        return cls(
+            id=user.id,
+            name=user.name,
+            email=user.email,
+            role=user.role,
+            permissions=permissions
+        )
+
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"

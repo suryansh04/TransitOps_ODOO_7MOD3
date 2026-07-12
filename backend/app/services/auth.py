@@ -11,6 +11,14 @@ from app.models.user import User
 
 class AuthService:
     @staticmethod
+    def _raise_lockout_exception(locked_until: datetime):
+        ist_time = locked_until + timedelta(hours=5, minutes=30)
+        formatted_ist = ist_time.strftime("%Y-%m-%d %I:%M %p IST")
+        raise HTTPException(
+            status_code=423,
+            detail=f"Account locked until {formatted_ist}"
+        )
+    @staticmethod
     def verify_password(password: str, hashed: str) -> bool:
         try:
             salt, stored_hash = hashed.split('.')
@@ -47,21 +55,14 @@ class AuthService:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="role in request doesn't match the account's actual role")
 
         if user.locked_until and user.locked_until > datetime.utcnow():
-            ist_time = user.locked_until + timedelta(hours=5, minutes=30)
-            formatted_ist = ist_time.strftime("%Y-%m-%d %I:%M %p IST")
-            raise HTTPException(
-                status_code=423,
-                detail=f"Account locked until {formatted_ist}"
-            )
+            cls._raise_lockout_exception(user.locked_until)
 
         if not cls.verify_password(login_req.password, user.password_hash):
             user.failed_login_attempts += 1
             if user.failed_login_attempts >= 5:
                 user.locked_until = datetime.utcnow() + timedelta(minutes=15)
                 UserRepository.update(db, user)
-                ist_time = user.locked_until + timedelta(hours=5, minutes=30)
-                formatted_ist = ist_time.strftime("%Y-%m-%d %I:%M %p IST")
-                raise HTTPException(status_code=423, detail=f"Account locked until {formatted_ist}")
+                cls._raise_lockout_exception(user.locked_until)
             
             UserRepository.update(db, user)
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
@@ -73,13 +74,6 @@ class AuthService:
 
         access_token = cls.create_access_token(data={"sub": str(user.id)})
         permissions = RolePermissionRepository.get_permissions_by_role(db, user.role)
-        
-        user_resp = UserResponse(
-            id=user.id,
-            name=user.name,
-            email=user.email,
-            role=user.role,
-            permissions=permissions
-        )
+        user_resp = UserResponse.build(user, permissions)
         
         return TokenResponse(access_token=access_token, user=user_resp)
