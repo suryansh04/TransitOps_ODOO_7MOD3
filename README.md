@@ -33,7 +33,7 @@ graph TD
     subgraph Frontend [Frontend Architecture]
         UI[React/Vite Client]
         Auth[Auth Context]
-        Pages[Dashboard, Fleet, Trips]
+        Pages[Dashboard Page, Fleet Page, Trips Page, etc.]
     end
     
     subgraph Backend [Backend Architecture]
