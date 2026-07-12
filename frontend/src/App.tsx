@@ -59,12 +59,21 @@ const RBACRoute: React.FC<{ children: React.ReactNode, module: string }> = ({ ch
 }
 
 // Reusable Mock Page component
-const MockPage = ({ title }: { title: string }) => (
-  <div>
-    <h2 className="text-2xl font-bold">{title} Page</h2>
-    <p className="text-muted-foreground mt-4">This is the {title.toLowerCase()} module placeholder.</p>
-  </div>
-)
+const MockPage = ({ title }: { title: string }) => {
+  const { user } = useAuth()
+  return (
+    <div>
+      <h2 className="text-2xl font-bold">{title} Page</h2>
+      {title === "Dashboard" ? (
+        <p className="text-muted-foreground mt-4">
+          Welcome, {user?.name} ({user?.role}). Auth flow completed successfully.
+        </p>
+      ) : (
+        <p className="text-muted-foreground mt-4">This is the {title.toLowerCase()} module placeholder.</p>
+      )}
+    </div>
+  )
+}
 
 const AppContent: React.FC = () => {
   return (
