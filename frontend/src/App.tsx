@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { AuthProvider, useAuth } from "@/context/AuthContext"
 import { Login } from "@/pages/Login"
 import { Settings } from "@/pages/Settings"
+import Dashboard from "@/pages/Dashboard"
 import { Trips } from "@/pages/Trips"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { Loader2 } from "lucide-react"
@@ -85,7 +86,7 @@ const AppContent: React.FC = () => {
         
         {/* Main Application Routes */}
         <Route path="/" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-          <Route index element={<MockPage title="Dashboard" />} />
+          <Route index element={<Dashboard />} />
           <Route path="fleet" element={<RBACRoute module="fleet"><MockPage title="Fleet" /></RBACRoute>} />
           <Route path="drivers" element={<RBACRoute module="drivers"><MockPage title="Drivers" /></RBACRoute>} />
           <Route path="trips" element={<RBACRoute module="trips"><Trips /></RBACRoute>} />
