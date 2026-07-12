@@ -23,6 +23,7 @@ class TripComplete(BaseModel):
 class TripResponse(TripCreate):
     id: int
     trip_code: str
+    revenue_amount: Optional[float]  # nullable in DB for seeded/older trips
     actual_distance_km: Optional[float]
     final_odometer_km: Optional[float]
     fuel_consumed_liters: Optional[float]
@@ -34,6 +35,14 @@ class TripResponse(TripCreate):
     created_by: Optional[int]
     created_at: datetime
     updated_at: datetime
+    class Config:
+        from_attributes = True
+
+class AvailableDriverForTrip(BaseModel):
+    id: int
+    name: str
+    license_category: str
+    status: str
     class Config:
         from_attributes = True
 
