@@ -133,7 +133,10 @@ export const AppLayout: React.FC = () => {
             </div>
             
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" className="text-muted-foreground">
+              {user?.permissions?.['trips'] === 'full' && (
+                <Button className="cursor-pointer">Dispatch Trip</Button>
+              )}
+              <Button variant="ghost" size="icon" className="text-muted-foreground cursor-pointer">
                 <Bell className="h-4 w-4" />
               </Button>
             </div>

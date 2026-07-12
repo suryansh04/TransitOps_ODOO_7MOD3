@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Numeric, Boolean, Date, DateTime, ForeignKey, text
+from sqlalchemy import Column, Integer, String, Numeric, Boolean, Date, DateTime, ForeignKey, text, CheckConstraint
 from sqlalchemy.orm import relationship
 from app.database import Base
 from datetime import datetime
@@ -16,6 +16,13 @@ class Vehicle(Base):
     region = Column(String(60), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('available', 'on_trip', 'in_shop', 'retired')",
+            name="check_vehicle_status"
+        ),
+    )
 
     trips = relationship("Trip", back_populates="vehicle")
     maintenance_logs = relationship("MaintenanceLog", back_populates="vehicle")
@@ -36,6 +43,13 @@ class Driver(Base):
     status = Column(String(20), nullable=False, default='available')
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('available', 'on_trip', 'off_duty', 'suspended')",
+            name="check_driver_status"
+        ),
+    )
 
     trips = relationship("Trip", back_populates="driver")
 
@@ -62,6 +76,13 @@ class Trip(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('draft', 'dispatched', 'completed', 'cancelled')",
+            name="check_trip_status"
+        ),
+    )
+
     vehicle = relationship("Vehicle", back_populates="trips")
     driver = relationship("Driver", back_populates="trips")
     fuel_logs = relationship("FuelLog", back_populates="trip")
@@ -78,6 +99,13 @@ class MaintenanceLog(Base):
     closed_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('active', 'completed')",
+            name="check_maintenance_status"
+        ),
+    )
 
     vehicle = relationship("Vehicle", back_populates="maintenance_logs")
 
