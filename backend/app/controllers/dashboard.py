@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.core.auth import require_permission
+from app.core.auth import require_permission, get_current_user
 from app.schemas.dashboard import SettingUpdate, SettingResponse
 from app.models.domain import Vehicle, Driver, Trip, OrgSetting, FuelLog, MaintenanceLog
 from sqlalchemy import func
@@ -9,8 +9,7 @@ from sqlalchemy import func
 router = APIRouter(prefix="/api")
 
 @router.get("/dashboard")
-def get_dashboard(vehicle_type: str = None, status: str = None, region: str = None, db: Session = Depends(get_db), user = Depends(require_permission("fleet"))):
-    # Simplified mock for the hackathon but accurately reflecting db counts
+def get_dashboard(vehicle_type: str = None, status: str = None, region: str = None, db: Session = Depends(get_db), user = Depends(get_current_user)):
     v_query = db.query(Vehicle)
     if vehicle_type: v_query = v_query.filter(Vehicle.type == vehicle_type)
     if status: v_query = v_query.filter(Vehicle.status == status)
