@@ -2,11 +2,19 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.core.auth import require_permission, get_current_user
-from app.schemas.ops import TripCreate, TripDispatch, TripComplete, TripResponse, FuelLogCreate, FuelLogResponse, ExpenseCreate, ExpenseResponse
+from app.schemas.ops import TripCreate, TripDispatch, TripComplete, TripResponse, AvailableDriverForTrip, FuelLogCreate, FuelLogResponse, ExpenseCreate, ExpenseResponse
 from app.models.domain import Trip, Vehicle, Driver, FuelLog, Expense, MaintenanceLog
 from datetime import datetime, date
 
 router = APIRouter(prefix="/api")
+
+@router.get("/trips/available-drivers", response_model=list[AvailableDriverForTrip])
+def get_available_drivers_for_trip(db: Session = Depends(get_db), user = Depends(require_permission("trips"))):
+    """Returns minimal driver info for the trip-creation form.
+    Gated on 'trips' permission so Dispatchers can access it without needing 'drivers' module access.
+    Only returns drivers with status='available' (not on_trip, suspended, off_duty).
+    """
+    return db.query(Driver).filter(Driver.status == "available").all()
 
 @router.get("/trips", response_model=list[TripResponse])
 def get_trips(status: str = None, db: Session = Depends(get_db), user = Depends(require_permission("trips"))):
