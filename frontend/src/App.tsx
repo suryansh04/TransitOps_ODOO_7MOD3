@@ -7,6 +7,7 @@ import { Settings } from "@/pages/Settings"
 import Dashboard from "@/pages/Dashboard"
 import { Trips } from "@/pages/Trips"
 import { Drivers } from "@/pages/Drivers"
+import { Maintenance } from "@/pages/Maintenance"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { Loader2 } from "lucide-react"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -52,8 +53,16 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 // Route wrapper for RBAC permissions
 const RBACRoute: React.FC<{ children: React.ReactNode, module: string }> = ({ children, module }) => {
   const { user } = useAuth()
+  const analyticsAllowedRoles = new Set(["fleet_manager", "financial_analyst"])
   
   if (module === "always") return <>{children}</>
+
+  if (module === "analytics") {
+    if (user?.role && analyticsAllowedRoles.has(user.role)) {
+      return <>{children}</>
+    }
+    return <Navigate to="/" replace />
+  }
   
   if (user?.permissions?.[module] && user.permissions[module] !== "none") {
     return <>{children}</>
@@ -92,7 +101,7 @@ const AppContent: React.FC = () => {
           <Route path="fleet" element={<RBACRoute module="fleet"><MockPage title="Fleet" /></RBACRoute>} />
           <Route path="drivers" element={<RBACRoute module="drivers"><Drivers /></RBACRoute>} />
           <Route path="trips" element={<RBACRoute module="trips"><Trips /></RBACRoute>} />
-          <Route path="maintenance" element={<RBACRoute module="fleet"><MockPage title="Maintenance" /></RBACRoute>} />
+          <Route path="maintenance" element={<RBACRoute module="fleet"><Maintenance /></RBACRoute>} />
           <Route path="fuel-expenses" element={<RBACRoute module="fuel_expenses"><MockPage title="Fuel & Expenses" /></RBACRoute>} />
           <Route path="analytics" element={<RBACRoute module="analytics"><Analytics /></RBACRoute>} />
           <Route path="settings" element={<RBACRoute module="settings"><Settings /></RBACRoute>} />
