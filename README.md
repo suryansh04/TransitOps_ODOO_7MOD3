@@ -1,29 +1,58 @@
-# TransitOps — Smart Transport Operations Platform
+<div align="center">
+  <img src="frontend/src/assets/logo.png" alt="TransitOps Logo" width="120" />
+  <h1>TransitOps</h1>
+  <p><strong>Smart Transport Operations Platform</strong></p>
+  
+  [![React](https://img.shields.io/badge/React-18.x-blue.svg)](https://reactjs.org/)
+  [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg)](https://fastapi.tiangolo.com/)
+  [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15.x-336791.svg)](https://www.postgresql.org/)
+  [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178c6.svg)](https://www.typescriptlang.org/)
+  [![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-latest-000000.svg)](https://ui.shadcn.com/)
+</div>
 
-A centralized, professional-grade platform designed to manage the complete lifecycle of transport operations. From vehicle registration and driver management to live dispatching, maintenance logs, fuel tracking, and business analytics, TransitOps unifies your entire fleet in one powerful dashboard.
+<br />
 
-## 🚀 Tech Stack
+TransitOps is a centralized, professional-grade platform designed to manage the complete lifecycle of transport operations. From vehicle registration and driver management to live dispatching, maintenance logs, fuel tracking, and business analytics, TransitOps unifies your entire fleet into one powerful dashboard. 
 
-**Frontend:**
-- React 18, TypeScript, Vite
-- UI Components: shadcn/ui (Tailwind CSS, Radix UI)
-- Routing: React Router
-- Data Fetching: Axios
+## ✨ Key Features
 
-**Backend:**
-- Framework: FastAPI (Python 3)
-- Database: PostgreSQL
-- ORM: SQLAlchemy
-- Migrations: Alembic
-- Auth: JWT (JSON Web Tokens)
+- 🚛 **Fleet & Driver Management:** Complete registry for vehicles and drivers with real-time status tracking.
+- 🗺️ **Live Trip Dispatching:** Seamless lifecycle management from Draft → Dispatched → Completed.
+- ⚙️ **Automated Workflows:** Dispatching automatically marks drivers and vehicles as `on_trip`. Completion calculates ROI and creates fuel logs.
+- 📊 **Rich Analytics:** High-performance aggregation providing fuel efficiency, fleet utilization, and operational costs.
+- 🛡️ **Role-Based Access Control (RBAC):** Strict permissions matrix isolating functionality by role (Dispatcher, Fleet Manager, Safety Officer, Financial Analyst).
+
+---
+
+## 🏗️ Architecture
+
+The platform follows a modern decoupled architecture:
+
+```mermaid
+graph TD
+    Client[React/Vite Frontend] -->|REST API + JWT| API[FastAPI Backend]
+    API -->|SQLAlchemy ORM| DB[(PostgreSQL)]
+    
+    subgraph Frontend [Frontend Architecture]
+        Auth[Auth Context]
+        Components[shadcn/ui Components]
+        Pages[Dashboard, Fleet, Trips, etc.]
+    end
+    
+    subgraph Backend [Backend Architecture]
+        Controllers[API Routers]
+        Services[Business Logic & RBAC]
+        Models[Pydantic & SQLAlchemy Models]
+    end
+```
 
 ---
 
 ## 🛠️ Installation & Setup
 
-### 1. Backend Setup
+### 1. Backend Configuration (FastAPI)
 
-Ensure you have Python 3.9+ and PostgreSQL installed.
+Ensure you have **Python 3.9+** and **PostgreSQL** installed.
 
 ```bash
 # 1. Navigate to the backend directory
@@ -31,34 +60,30 @@ cd backend
 
 # 2. Create and activate a virtual environment
 python -m venv venv
-# On Windows:
-.\venv\Scripts\activate
-# On Mac/Linux:
-source venv/bin/activate
+source venv/bin/activate  # On Windows: .\venv\Scripts\activate
 
 # 3. Install dependencies
 pip install -r requirements.txt
 
 # 4. Configure Environment Variables
-# Create a .env file in the backend directory with your credentials:
+# Create a .env file with your database credentials:
 echo "DATABASE_URL=postgresql://user:password@localhost:5432/hackdb" > .env
 echo "JWT_SECRET=super-secret-key-change-it-in-production" >> .env
 
-# 5. Set up the Database
-# Ensure PostgreSQL is running and your database matches the DATABASE_URL.
+# 5. Set up the Database Schema
 alembic upgrade head
 
-# 6. Seed the database with rich test data (deterministic data for consistent testing)
+# 6. Seed the Database (Populates test users, vehicles, and trips)
 python -m app.seed --reset --rich-data
 
-# 7. Run the FastAPI server
+# 7. Start the Server
 uvicorn app.main:app --reload
 ```
-*The backend will be available at [http://localhost:8000](http://localhost:8000). API documentation is available at `http://localhost:8000/docs`.*
+*API runs at [http://localhost:8000](http://localhost:8000). Swagger UI: `http://localhost:8000/docs`.*
 
-### 2. Frontend Setup
+### 2. Frontend Configuration (React + Vite)
 
-Ensure you have Node.js 18+ installed.
+Ensure you have **Node.js 18+** installed.
 
 ```bash
 # 1. Navigate to the frontend directory
@@ -68,60 +93,52 @@ cd frontend
 npm install
 
 # 3. Configure Environment Variables
-# Create a .env file in the frontend root:
-echo VITE_API_URL=http://localhost:8000 > .env
+echo "VITE_API_URL=http://localhost:8000" > .env
 
-# 4. Start the development server
+# 4. Start the Application
 npm run dev
 ```
-*The frontend will be available at [http://localhost:5173](http://localhost:5173).*
-
-### 3. Demo Accounts
-
-Log in using any of the seeded RBAC accounts:
-- **Fleet Manager**: `fleet@transitops.in` (Pass: `password123`)
-- **Dispatcher**: `raven@transitops.in` (Pass: `password123`)
-- **Safety Officer**: `safety@transitops.in` (Pass: `password123`)
-- **Financial Analyst**: `finance@transitops.in` (Pass: `password123`)
+*Frontend runs at [http://localhost:5173](http://localhost:5173).*
 
 ---
 
-## 🗄️ Database Schema Overview
+## 🔑 Demo Accounts
 
-TransitOps uses a strictly typed, normalized relational PostgreSQL database. 
+Use these pre-seeded accounts to explore the RBAC capabilities (Password for all: `password123`):
 
-### Core Entities:
-- **`users`**: Manages authentication, hashed passwords, and RBAC roles (`fleet_manager`, `dispatcher`, etc.).
-- **`vehicles`**: Stores fleet assets (`type`, `capacity`, `odometer`, `status`: available, on_trip, in_shop, retired).
-- **`drivers`**: Manages driver profiles, license details, and status.
-- **`trips`**: Core operational entity linking a `vehicle` and `driver` to a route (`source`, `destination`, `status`).
-- **`maintenance_logs`**: Service records for vehicles (`cost`, `service_type`).
-- **`fuel_logs` & `expenses`**: Tracks operational expenditures (`liters`, `cost`, `toll_amount`) linked to specific trips and vehicles.
-- **`role_permissions`**: A central matrix mapping roles to module access levels (`none`, `view`, `full`).
+| Role | Email | Module Access |
+|------|-------|---------------|
+| **Fleet Manager** | `fleet@transitops.in` | Full access to Fleet & Settings |
+| **Dispatcher** | `raven@transitops.in` | Full access to Trips & Dashboards |
+| **Safety Officer** | `safety@transitops.in` | Full access to Drivers |
+| **Financial Analyst** | `finance@transitops.in` | Full access to Fuel, Expenses & Analytics |
 
 ---
 
-## 📡 API Architecture
+## 🗄️ Database Schema
 
-The backend exposes a RESTful API powered by FastAPI, featuring automatic OpenAPI documentation.
+The system uses a strictly typed, normalized relational model:
 
-### Key Endpoint Groupings:
-- **Auth (`/api/auth`)**:
-  - `POST /login`: Authenticates user and returns a JWT token.
-  - `GET /me`: Returns the current user's profile and resolved RBAC permissions.
-- **Fleet Management (`/api/vehicles`, `/api/drivers`)**:
-  - `GET`, `POST`, `PUT`, `DELETE` operations for registering and updating vehicles and drivers. Strict validation via Pydantic.
-- **Operations (`/api/trips`, `/api/maintenance`, `/api/fuel-logs`, `/api/expenses`)**:
-  - Manages the lifecycle of a trip (Draft -> Dispatched -> Completed). Automates state transitions (e.g., dispatching a trip safely sets the driver and vehicle to `on_trip`).
-- **Dashboard & Analytics (`/api/dashboard`, `/api/analytics`)**:
-  - High-performance aggregation endpoints providing optimized KPIs, fuel efficiency metrics, and financial cost data for charts.
+- `users`: Authentication, hashed passwords, and roles.
+- `vehicles`: Fleet assets (`capacity`, `odometer`, `status`: available/on_trip/in_shop/retired).
+- `drivers`: Driver profiles, licenses, and safety scores.
+- `trips`: The core operational entity linking a vehicle and driver to a route.
+- `maintenance_logs`: Service records and costs.
+- `fuel_logs` & `expenses`: Tracks operational expenditures linked to trips/vehicles.
+- `role_permissions`: A central matrix mapping roles to module access levels.
 
 ---
 
-## 🔐 Role-Based Access Control (RBAC)
+## 📡 API Endpoints
 
-TransitOps enforces strict RBAC at both the API layer (via FastAPI dependencies) and the UI layer (via route guards and conditional rendering).
-- **Fleet Manager**: Full write access to Vehicles and Settings.
-- **Dispatcher**: Full write access to Trips and Dashboards.
-- **Safety Officer**: Full write access to Drivers and compliance data.
-- **Financial Analyst**: Full write access to Fuel, Expenses, and Analytics.
+The RESTful API is structured into modular routers:
+
+- **Auth** (`/api/auth`): `/login`, `/me`
+- **Fleet** (`/api/vehicles`, `/api/drivers`): CRUD with strict Pydantic validation.
+- **Operations** (`/api/trips`, `/api/maintenance`, `/api/fuel-logs`, `/api/expenses`): Manages the state machine of active transport operations.
+- **Analytics** (`/api/dashboard`, `/api/analytics`): Highly optimized aggregation pipelines for frontend charts.
+
+---
+<div align="center">
+  <i>Built for modern transport management.</i>
+</div>
