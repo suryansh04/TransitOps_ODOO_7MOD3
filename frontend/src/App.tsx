@@ -5,6 +5,7 @@ import { Login } from "@/pages/Login"
 import { Settings } from "@/pages/Settings"
 import Dashboard from "@/pages/Dashboard"
 import { Trips } from "@/pages/Trips"
+import { Drivers } from "@/pages/Drivers"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { Loader2 } from "lucide-react"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -88,7 +89,7 @@ const AppContent: React.FC = () => {
         <Route path="/" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
           <Route index element={<Dashboard />} />
           <Route path="fleet" element={<RBACRoute module="fleet"><MockPage title="Fleet" /></RBACRoute>} />
-          <Route path="drivers" element={<RBACRoute module="drivers"><MockPage title="Drivers" /></RBACRoute>} />
+          <Route path="drivers" element={<RBACRoute module="drivers"><Drivers /></RBACRoute>} />
           <Route path="trips" element={<RBACRoute module="trips"><Trips /></RBACRoute>} />
           <Route path="maintenance" element={<RBACRoute module="fleet"><MockPage title="Maintenance" /></RBACRoute>} />
           <Route path="fuel-expenses" element={<RBACRoute module="fuel_expenses"><MockPage title="Fuel & Expenses" /></RBACRoute>} />
