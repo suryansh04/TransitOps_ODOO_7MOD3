@@ -39,14 +39,19 @@ source venv/bin/activate
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Set up the Database
-# Ensure PostgreSQL is running and your database is created.
+# 4. Configure Environment Variables
+# Create a .env file in the backend directory with your credentials:
+echo "DATABASE_URL=postgresql://user:password@localhost:5432/hackdb" > .env
+echo "JWT_SECRET=super-secret-key-change-it-in-production" >> .env
+
+# 5. Set up the Database
+# Ensure PostgreSQL is running and your database matches the DATABASE_URL.
 alembic upgrade head
 
-# 5. Seed the database with rich test data (deterministic data for consistent testing)
+# 6. Seed the database with rich test data (deterministic data for consistent testing)
 python -m app.seed --reset --rich-data
 
-# 6. Run the FastAPI server
+# 7. Run the FastAPI server
 uvicorn app.main:app --reload
 ```
 *The backend will be available at [http://localhost:8000](http://localhost:8000). API documentation is available at `http://localhost:8000/docs`.*
