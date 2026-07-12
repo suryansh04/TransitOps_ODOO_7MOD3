@@ -21,6 +21,10 @@
     --color-chart-3: var(--chart-3);
     --color-chart-2: var(--chart-2);
     --color-chart-1: var(--chart-1);
+    --color-status-available: var(--status-available);
+    --color-status-on-trip: var(--status-on-trip);
+    --color-status-in-shop: var(--status-in-shop);
+    --color-status-retired: var(--status-retired);
     --color-ring: var(--ring);
     --color-input: var(--input);
     --color-border: var(--border);
@@ -72,6 +76,10 @@
     --chart-3: oklch(0.439 0 0);
     --chart-4: oklch(0.371 0 0);
     --chart-5: oklch(0.269 0 0);
+    --status-available: #12c24b;
+    --status-on-trip: #3b82f6;
+    --status-in-shop: #ff6a00;
+    --status-retired: #ff3344;
     --radius: 0.625rem;
     --sidebar: oklch(0.985 0 0);
     --sidebar-foreground: oklch(0.145 0 0);
@@ -107,6 +115,10 @@
     --chart-3: oklch(0.439 0 0);
     --chart-4: oklch(0.371 0 0);
     --chart-5: oklch(0.269 0 0);
+    --status-available: #12c24b;
+    --status-on-trip: #3b82f6;
+    --status-in-shop: #ff6a00;
+    --status-retired: #ff3344;
     --sidebar: oklch(0.205 0 0);
     --sidebar-foreground: oklch(0.985 0 0);
     --sidebar-primary: oklch(0.488 0.243 264.376);

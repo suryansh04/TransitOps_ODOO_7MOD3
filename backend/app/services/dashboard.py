@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
-from datetime import datetime
+from datetime import datetime, date
+from fastapi import HTTPException
 from app.repositories.dashboard import DashboardRepository
 
 class DashboardService:
@@ -52,23 +53,28 @@ class DashboardService:
         }
     
     def get_analytics_data(self, from_date: str = None, to_date: str = None):
-        data = self.repo.get_analytics_metrics(from_date, to_date)
-        op_cost = data["fuel_sum"] + data["maint_sum"]
-        
+        def parse_date(value: str, field_name: str):
+            if value is None:
+                return None
+            try:
+                return date.fromisoformat(value)
+            except ValueError as exc:
+                raise HTTPException(status_code=422, detail=f"Invalid {field_name}. Use YYYY-MM-DD format") from exc
+
+        from_dt = parse_date(from_date, "from_date")
+        to_dt = parse_date(to_date, "to_date")
+        if from_dt and to_dt and from_dt > to_dt:
+            raise HTTPException(status_code=422, detail="from_date cannot be after to_date")
+
+        data = self.repo.get_analytics_metrics(from_dt, to_dt)
+
         return {
-            "fuel_efficiency_km_per_l": 8.4,
-            "fleet_utilization_percent": 81.0,
-            "operational_cost": op_cost,
-            "vehicle_roi_percent": 14.2,
-            "monthly_revenue": [
-                { "month": "2026-01", "revenue": 45000 },
-                { "month": "2026-02", "revenue": 52000 }
-            ],
-            "top_costliest_vehicles": [
-                { "vehicle_id": 2, "registration_number": "TRUCK-11", "total_cost": 42500 },
-                { "vehicle_id": 3, "registration_number": "MINI-03", "total_cost": 18200 },
-                { "vehicle_id": 1, "registration_number": "VAN-05", "total_cost": 5300 }
-            ]
+            "fuel_efficiency_km_per_l": data["fuel_efficiency_km_per_l"],
+            "fleet_utilization_percent": data["fleet_utilization_percent"],
+            "operational_cost": data["operational_cost"],
+            "vehicle_roi_percent": data["vehicle_roi_percent"],
+            "monthly_revenue": data["monthly_revenue"],
+            "top_costliest_vehicles": data["top_costliest_vehicles"],
         }
         
     def get_settings(self):
