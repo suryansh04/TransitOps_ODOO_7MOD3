@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { AuthProvider, useAuth } from "@/context/AuthContext"
 import { Login } from "@/pages/Login"
 import { Settings } from "@/pages/Settings"
+import { Trips } from "@/pages/Trips"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { Loader2 } from "lucide-react"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -87,7 +88,7 @@ const AppContent: React.FC = () => {
           <Route index element={<MockPage title="Dashboard" />} />
           <Route path="fleet" element={<RBACRoute module="fleet"><MockPage title="Fleet" /></RBACRoute>} />
           <Route path="drivers" element={<RBACRoute module="drivers"><MockPage title="Drivers" /></RBACRoute>} />
-          <Route path="trips" element={<RBACRoute module="trips"><MockPage title="Trips" /></RBACRoute>} />
+          <Route path="trips" element={<RBACRoute module="trips"><Trips /></RBACRoute>} />
           <Route path="maintenance" element={<RBACRoute module="fleet"><MockPage title="Maintenance" /></RBACRoute>} />
           <Route path="fuel-expenses" element={<RBACRoute module="fuel_expenses"><MockPage title="Fuel & Expenses" /></RBACRoute>} />
           <Route path="analytics" element={<RBACRoute module="analytics"><MockPage title="Analytics" /></RBACRoute>} />
