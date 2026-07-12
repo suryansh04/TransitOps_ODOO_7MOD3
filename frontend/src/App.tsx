@@ -8,6 +8,7 @@ import Dashboard from "@/pages/Dashboard"
 import { Trips } from "@/pages/Trips"
 import { Drivers } from "@/pages/Drivers"
 import { Maintenance } from "@/pages/Maintenance"
+import { FuelExpenses } from "@/pages/FuelExpenses"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { Loader2 } from "lucide-react"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -102,7 +103,7 @@ const AppContent: React.FC = () => {
           <Route path="drivers" element={<RBACRoute module="drivers"><Drivers /></RBACRoute>} />
           <Route path="trips" element={<RBACRoute module="trips"><Trips /></RBACRoute>} />
           <Route path="maintenance" element={<RBACRoute module="fleet"><Maintenance /></RBACRoute>} />
-          <Route path="fuel-expenses" element={<RBACRoute module="fuel_expenses"><MockPage title="Fuel & Expenses" /></RBACRoute>} />
+          <Route path="fuel-expenses" element={<RBACRoute module="fuel_expenses"><FuelExpenses /></RBACRoute>} />
           <Route path="analytics" element={<RBACRoute module="analytics"><Analytics /></RBACRoute>} />
           <Route path="settings" element={<RBACRoute module="settings"><Settings /></RBACRoute>} />
         </Route>
