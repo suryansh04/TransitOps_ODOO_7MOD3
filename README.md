@@ -42,8 +42,6 @@ Install the required Python packages:
 pip install -r requirements.txt
 ```
 
-*(Note: Depending on your exact setup, you may also need the `psycopg2` driver if using a live PostgreSQL database, or you can stick to default SQLite for local dev).*
-
 Seed the database with initial dummy data (Test Users, Trucks, Drivers, and Trips):
 ```bash
 # Ensure you are inside the backend directory and the venv is activated
