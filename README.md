@@ -1,119 +1,122 @@
 # TransitOps — Smart Transport Operations Platform
 
-A centralized platform that allows organizations to manage the complete lifecycle of their transport operations—from vehicle registration and driver management to dispatching, maintenance, fuel logging, and analytics. Built for an 8-hour hackathon.
+A centralized, professional-grade platform designed to manage the complete lifecycle of transport operations. From vehicle registration and driver management to live dispatching, maintenance logs, fuel tracking, and business analytics, TransitOps unifies your entire fleet in one powerful dashboard.
 
-## Documentation Reference
-Before writing any code, please ensure you review the core documentation files that govern the architecture and business rules of this project:
+## 🚀 Tech Stack
 
-- **[`HACKATHON.md`](./HACKATHON.md)**: Rules, architecture layout, and UI constraints (strict `shadcn/ui` usage).
-- **[`SCHEMA.MD`](./SCHEMA.MD)**: Database schema, enumerations, relationships, and the central RBAC matrix.
-- **[`CONTRACTS.md`](./CONTRACTS.md)**: The strict API contract for all endpoints, including request/response bodies and status codes.
-- **[`implementation.md`](./implementation.md)**: Step-by-step roadmap for implementing the backend, frontend, and specific UI component logic.
-- **[`RBAC_RULES.md`](./RBAC_RULES.md)**: A quick-reference guide for role responsibilities and module access levels.
+**Frontend:**
+- React 18, TypeScript, Vite
+- UI Components: shadcn/ui (Tailwind CSS, Radix UI)
+- Routing: React Router
+- Data Fetching: Axios
 
-## Tech Stack
-*   **Frontend:** React, TypeScript, Vite, `shadcn/ui`, Tailwind CSS, `shadcn charts`
-*   **Backend:** FastAPI, PostgreSQL, SQLAlchemy, Alembic
-
-## Getting Started
-
-Follow these simple steps to set up the TransitOps platform locally.
-
-### 1. Backend Setup (FastAPI)
-
-Open a terminal and navigate to the `backend` folder:
-```bash
-cd backend
-```
-
-Create a virtual environment to store Python dependencies:
-```bash
-# On Windows
-python -m venv venv
-.\venv\Scripts\activate
-
-# On Mac/Linux
-python3 -m venv venv
-source venv/bin/activate
-```
-
-Install the required Python packages:
-```bash
-pip install -r requirements.txt
-```
-
-Seed the database with initial dummy data (Test Users, Trucks, Drivers, and Trips):
-```bash
-# Ensure you are inside the backend directory and the venv is activated
-python -m app.seed
-```
-
-For richer analytics demo data (more completed trips, fuel logs, expenses), run:
-```bash
-# Adds deterministic extra data once (safe to share across team)
-python -m app.seed --rich-data
-```
-
-If you want a fully fresh, consistent dataset before a demo:
-```bash
-# Reset operational data, then seed baseline + rich analytics data
-python -m app.seed --reset --rich-data
-```
-
-Optional: control volume of generated analytics rows:
-```bash
-python -m app.seed --reset --rich-data --trip-count 72
-```
-
-Start the FastAPI backend server:
-```bash
-uvicorn app.main:app --reload
-```
-*The backend will now be running at `http://localhost:8000`.*
+**Backend:**
+- Framework: FastAPI (Python 3)
+- Database: PostgreSQL
+- ORM: SQLAlchemy
+- Migrations: Alembic
+- Auth: JWT (JSON Web Tokens)
 
 ---
 
-### 2. Frontend Setup (React + Vite)
+## 🛠️ Installation & Setup
 
-Open a **new** terminal and navigate to the `frontend` folder:
+### 1. Backend Setup
+
+Ensure you have Python 3.9+ and PostgreSQL installed.
+
 ```bash
+# 1. Navigate to the backend directory
+cd backend
+
+# 2. Create and activate a virtual environment
+python -m venv venv
+# On Windows:
+.\venv\Scripts\activate
+# On Mac/Linux:
+source venv/bin/activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Set up the Database
+# Ensure PostgreSQL is running and your database is created.
+alembic upgrade head
+
+# 5. Seed the database with rich test data (deterministic data for consistent testing)
+python -m app.seed --reset --rich-data
+
+# 6. Run the FastAPI server
+uvicorn app.main:app --reload
+```
+*The backend will be available at [http://localhost:8000](http://localhost:8000). API documentation is available at `http://localhost:8000/docs`.*
+
+### 2. Frontend Setup
+
+Ensure you have Node.js 18+ installed.
+
+```bash
+# 1. Navigate to the frontend directory
 cd frontend
-```
 
-Install the required Node.js dependencies:
-```bash
+# 2. Install dependencies
 npm install
-```
 
-Create an environment file:
-1. Create a file named `.env` in the `frontend` folder.
-2. Add the following line so the frontend knows where the backend is:
-```env
-VITE_API_URL=http://localhost:8000
-```
+# 3. Configure Environment Variables
+# Create a .env file in the frontend root:
+echo VITE_API_URL=http://localhost:8000 > .env
 
-Start the React frontend server:
-```bash
+# 4. Start the development server
 npm run dev
 ```
-*The frontend will now be running (usually at `http://localhost:5173`).*
+*The frontend will be available at [http://localhost:5173](http://localhost:5173).*
 
-### 3. Log In
+### 3. Demo Accounts
 
-You can now open the frontend link in your browser and log in using any of the pre-seeded accounts:
-- **Fleet Manager:** `fleet@transitops.in` (Password: `password123`)
-- **Dispatcher:** `raven@transitops.in` (Password: `password123`)
-- **Safety Officer:** `safety@transitops.in` (Password: `password123`)
+Log in using any of the seeded RBAC accounts:
+- **Fleet Manager**: `fleet@transitops.in` (Pass: `password123`)
+- **Dispatcher**: `raven@transitops.in` (Pass: `password123`)
+- **Safety Officer**: `safety@transitops.in` (Pass: `password123`)
+- **Financial Analyst**: `financial@transitops.in` (Pass: `password123`)
 
-## Team Sharing (Easy Mode)
+---
 
-Use this workflow so everyone has the same demo numbers:
+## 🗄️ Database Schema Overview
 
-1. Commit and push changes to `backend/app/seed.py` + this README.
-2. Ask teammates to pull latest `main`.
-3. Everyone runs one command from `backend`:
-	```bash
-	python -m app.seed --reset --rich-data
-	```
+TransitOps uses a strictly typed, normalized relational PostgreSQL database. 
 
-Because the rich seed is deterministic, your charts/KPIs stay consistent across machines.
+### Core Entities:
+- **`users`**: Manages authentication, hashed passwords, and RBAC roles (`fleet_manager`, `dispatcher`, etc.).
+- **`vehicles`**: Stores fleet assets (`type`, `capacity`, `odometer`, `status`: available, on_trip, in_shop, retired).
+- **`drivers`**: Manages driver profiles, license details, and status.
+- **`trips`**: Core operational entity linking a `vehicle` and `driver` to a route (`source`, `destination`, `status`).
+- **`maintenance_logs`**: Service records for vehicles (`cost`, `service_type`).
+- **`fuel_logs` & `expenses`**: Tracks operational expenditures (`liters`, `cost`, `toll_amount`) linked to specific trips and vehicles.
+- **`role_permissions`**: A central matrix mapping roles to module access levels (`none`, `view`, `full`).
+
+---
+
+## 📡 API Architecture
+
+The backend exposes a RESTful API powered by FastAPI, featuring automatic OpenAPI documentation.
+
+### Key Endpoint Groupings:
+- **Auth (`/api/auth`)**:
+  - `POST /login`: Authenticates user and returns a JWT token.
+  - `GET /me`: Returns the current user's profile and resolved RBAC permissions.
+- **Fleet Management (`/api/vehicles`, `/api/drivers`)**:
+  - `GET`, `POST`, `PUT`, `DELETE` operations for registering and updating vehicles and drivers. Strict validation via Pydantic.
+- **Operations (`/api/trips`, `/api/maintenance`, `/api/fuel`, `/api/expenses`)**:
+  - Manages the lifecycle of a trip (Draft -> Dispatched -> Completed). Automates state transitions (e.g., dispatching a trip safely sets the driver and vehicle to `on_trip`).
+- **Dashboard & Analytics (`/api/dashboard`, `/api/analytics`)**:
+  - High-performance aggregation endpoints providing optimized KPIs, fuel efficiency metrics, and financial cost data for charts.
+
+---
+
+## 🔐 Role-Based Access Control (RBAC)
+
+TransitOps enforces strict RBAC at both the API layer (via FastAPI dependencies) and the UI layer (via route guards and conditional rendering).
+- **Fleet Manager**: Full write access to Vehicles and Settings.
+- **Dispatcher**: Full write access to Trips and Dashboards.
+- **Safety Officer**: Full write access to Drivers and compliance data.
+- **Financial Analyst**: Full write access to Fuel, Expenses, and Analytics.
