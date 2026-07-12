@@ -2,6 +2,7 @@ import React from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 import { AuthProvider, useAuth } from "@/context/AuthContext"
 import { Login } from "@/pages/Login"
+import { Settings } from "@/pages/Settings"
 import { AppLayout } from "@/components/layout/AppLayout"
 import { Loader2 } from "lucide-react"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -90,7 +91,7 @@ const AppContent: React.FC = () => {
           <Route path="maintenance" element={<RBACRoute module="fleet"><MockPage title="Maintenance" /></RBACRoute>} />
           <Route path="fuel-expenses" element={<RBACRoute module="fuel_expenses"><MockPage title="Fuel & Expenses" /></RBACRoute>} />
           <Route path="analytics" element={<RBACRoute module="analytics"><MockPage title="Analytics" /></RBACRoute>} />
-          <Route path="settings" element={<RBACRoute module="settings"><MockPage title="Settings" /></RBACRoute>} />
+          <Route path="settings" element={<RBACRoute module="settings"><Settings /></RBACRoute>} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
